@@ -20,6 +20,10 @@ public class PlayerController : MonoBehaviour
     }
     private void HandleActions()
     {
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            
+        }
         // Chute Alto (K)
         if (Input.GetKeyDown(KeyCode.K))
         {

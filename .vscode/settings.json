@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "CapoeiraMortalTeste.sln"
+    "dotnet.defaultSolution": "CapoeiraMortal.sln"
 }
