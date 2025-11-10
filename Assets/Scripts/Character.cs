@@ -1,26 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.IO.Compression;
 using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    private Vector3 fixedPosition;
+    private float fixedPosition;
 
     // Start is called before the first frame update
     void Start()
     {
-        fixedPosition = transform.position;
+        fixedPosition = transform.position.z;
     }
 
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    void LateUpdate()
-    {
-        transform.position = fixedPosition;
+        if (transform.position.z != fixedPosition)
+            transform.Translate(transform.position.x, transform.position.y, fixedPosition);
     }
 }
