@@ -305,8 +305,8 @@ MonoBehaviour:
   controller: {fileID: 7233187}
   combatSystem: {fileID: 7233185}
   mainCamera: {fileID: 332784134}
-  moveSpeed: 5
-  rotationSpeed: 10
+  moveSpeed: 100
+  rotationSpeed: 100
 --- !u!114 &7233185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4243,6 +4243,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 82ef69f30fc7b3243ba400760330b925, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 426730f3564da6a4a9ae72ca01969581, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6485753133034773777, guid: 426730f3564da6a4a9ae72ca01969581, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -4911,7 +4915,7 @@ MonoBehaviour:
   maxLevel: 5
   player: {fileID: 7233181}
   enemy: {fileID: 1575976205}
-  enemyAI: {fileID: 0}
+  enemyAI: {fileID: 1575976208}
 --- !u!4 &1919886742
 Transform:
   m_ObjectHideFlags: 0

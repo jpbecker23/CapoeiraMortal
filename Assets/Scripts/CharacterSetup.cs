@@ -86,16 +86,6 @@ public class CharacterSetup : MonoBehaviour
             cc.center = new Vector3(0, 1, 0); // Centro do collider
         }
         
-        // Garantir Animator (animações)
-        if (player.GetComponent<Animator>() == null)
-            player.AddComponent<Animator>();
-        else
-        {
-            Animator anim = player.GetComponent<Animator>();
-            anim.enabled = true; // Habilitar Animator
-            // Controller será atribuído via script Editor ou manualmente
-        }
-        
         // Garantir CombatSystem (sistema de combate)
         if (player.GetComponent<CombatSystem>() == null)
             player.AddComponent<CombatSystem>();
