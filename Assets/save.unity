@@ -4648,8 +4648,8 @@ MonoBehaviour:
   controller: {fileID: 1757761199}
   combatSystem: {fileID: 1757761196}
   mainCamera: {fileID: 332784134}
-  moveSpeed: 1
-  rotationSpeed: 1
+  moveSpeed: 100
+  rotationSpeed: 100
 --- !u!114 &1757761198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5067,27 +5067,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 48bf1b8faf38506498cf4efe257c631b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 10000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 48bf1b8faf38506498cf4efe257c631b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 10000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 48bf1b8faf38506498cf4efe257c631b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 10000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 48bf1b8faf38506498cf4efe257c631b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 194
+      value: 193.924
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 48bf1b8faf38506498cf4efe257c631b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 34
+      value: 210.6
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 48bf1b8faf38506498cf4efe257c631b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 486
+      value: 234.8
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 48bf1b8faf38506498cf4efe257c631b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5604,7 +5604,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1, y: -6}
+  m_AnchoredPosition: {x: -1, y: -5.9999695}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2133422428

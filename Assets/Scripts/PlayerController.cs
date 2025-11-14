@@ -34,24 +34,24 @@ public class PlayerController : MonoBehaviour
         if (mainCamera == null) mainCamera = Camera.main;
 
         // Configurar Animator para garantir que funcione corretamente
-    //     if (animator != null)
-    //     {
-    //         animator.enabled = true;
-    //         animator.updateMode = AnimatorUpdateMode.Normal; // Atualizar sempre
-    //         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate; // Sempre animar
+        if (animator != null)
+        {
+            animator.enabled = true;
+            animator.updateMode = AnimatorUpdateMode.Normal; // Atualizar sempre
+            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate; // Sempre animar
 
-    //         // FORCAR que Animator funcione - garantir que nao esta em T-pose
-    //         /*             if (animator.runtimeAnimatorController != null)
-    //                     {
-    //                         animator.Rebind(); // Reiniciar bindings do Animator
-    //                         // Forcar Idle inicial para evitar T-pose
-    //                         if (animator.isActiveAndEnabled)
-    //                         {
-    //                             animator.Play("Idle", 0, 0f);
-    //                             animator.Update(0f); // Atualizar imediatamente
-    //                         }
-    //                     } */
-    //     }
+            // FORCAR que Animator funcione - garantir que nao esta em T-pose
+            /*             if (animator.runtimeAnimatorController != null)
+                        {
+                            animator.Rebind(); // Reiniciar bindings do Animator
+                            // Forcar Idle inicial para evitar T-pose
+                            if (animator.isActiveAndEnabled)
+                            {
+                                animator.Play("Idle", 0, 0f);
+                                animator.Update(0f); // Atualizar imediatamente
+                            }
+                        } */
+        }
     }
 
     /// <summary>
@@ -70,29 +70,29 @@ public class PlayerController : MonoBehaviour
         UpdateAnimator(); // Atualizar parâmetros do Animator
     }
 
-    // void OnEnable()
-    // {
-    //     if (animator == null) animator = GetComponent<Animator>();
-    //     if (controller == null) controller = GetComponent<CharacterController>();
-    //     if (combatSystem == null) combatSystem = GetComponent<CombatSystem>();
-    //     if (mainCamera == null) mainCamera = Camera.main;
-    //     if (animator != null)
-    //     {
-    //         animator.enabled = true;
-    //         animator.updateMode = AnimatorUpdateMode.Normal;
-    //         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+    void OnEnable()
+    {
+        if (animator == null) animator = GetComponent<Animator>();
+        if (controller == null) controller = GetComponent<CharacterController>();
+        if (combatSystem == null) combatSystem = GetComponent<CombatSystem>();
+        if (mainCamera == null) mainCamera = Camera.main;
+        if (animator != null)
+        {
+            animator.enabled = true;
+            animator.updateMode = AnimatorUpdateMode.Normal;
+            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 
-    //         // FORCAR Rebind quando habilitado
-    //         if (animator.runtimeAnimatorController != null)
-    //         {
-    //             animator.Rebind();
-    //             if (animator.isActiveAndEnabled)
-    //             {
-    //                 animator.Play("Idle", 0, 0f);
-    //             }
-    //         }
-    //     }
-    // }
+            // FORCAR Rebind quando habilitado
+            if (animator.runtimeAnimatorController != null)
+            {
+                animator.Rebind();
+                if (animator.isActiveAndEnabled)
+                {
+                    animator.Play("Idle", 0, 0f);
+                }
+            }
+        }
+    }
 
     private void HandleInput()
     {
@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
 
         // Obter input do jogador (WASD ou setas)
         float horizontal = Input.GetAxis("Horizontal"); // A/D ou setas esquerda/direita
-        //float vertical = Input.GetAxis("Vertical"); // W/S ou setas cima/baixo
+        float vertical = Input.GetAxis("Vertical"); // W/S ou setas cima/baixo
 
         // Calcular direção relativa à câmera (para movimento funcionar independente da rotação da câmera)
         Vector3 forward = mainCamera != null ? mainCamera.transform.forward : Vector3.forward; // Frente da câmera
@@ -125,15 +125,14 @@ public class PlayerController : MonoBehaviour
         right.Normalize();
 
         // Calcular direção final de movimento combinando horizontal e vertical
-        //moveDirection = (right * horizontal +forward * vertical).normalized;
-        moveDirection = (right * horizontal).normalized;
+        moveDirection = (right * horizontal + forward * vertical).normalized;
 
         // Se há movimento significativo (maior que 0.1)
         if (moveDirection.magnitude >= 0.1f)
         {
             // Rotacionar personagem para olhar na direção do movimento
-            // Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             // Mover usando CharacterController
             controller.Move(moveDirection * moveSpeed * Time.deltaTime);
             currentSpeed = moveSpeed; // Atualizar velocidade atual
