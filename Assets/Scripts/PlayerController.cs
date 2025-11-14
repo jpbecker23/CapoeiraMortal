@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
 
         // Obter input do jogador (WASD ou setas)
         float horizontal = Input.GetAxis("Horizontal"); // A/D ou setas esquerda/direita
-        float vertical = Input.GetAxis("Vertical"); // W/S ou setas cima/baixo
+        //float vertical = Input.GetAxis("Vertical"); // W/S ou setas cima/baixo
 
         // Calcular direção relativa à câmera (para movimento funcionar independente da rotação da câmera)
         Vector3 forward = mainCamera != null ? mainCamera.transform.forward : Vector3.forward; // Frente da câmera
@@ -125,14 +125,15 @@ public class PlayerController : MonoBehaviour
         right.Normalize();
 
         // Calcular direção final de movimento combinando horizontal e vertical
-        moveDirection = (right * horizontal + forward * vertical).normalized;
+        //moveDirection = (right * horizontal + forward * vertical).normalized;
+        moveDirection = (right * horizontal).normalized;
 
         // Se há movimento significativo (maior que 0.1)
         if (moveDirection.magnitude >= 0.1f)
         {
             // Rotacionar personagem para olhar na direção do movimento
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            //Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             // Mover usando CharacterController
             controller.Move(moveDirection * moveSpeed * Time.deltaTime);
             currentSpeed = moveSpeed; // Atualizar velocidade atual
