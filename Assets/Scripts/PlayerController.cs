@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Start()
     {
+        Debug.Log("PlayerController iniciado.");
         // Buscar componentes automaticamente se não foram atribuídos
         if (animator == null) animator = GetComponent<Animator>();
         if (controller == null) controller = GetComponent<CharacterController>();

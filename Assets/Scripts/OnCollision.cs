@@ -16,9 +16,10 @@ public class OnCollision : MonoBehaviour
 
     }
 
-    private void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Colidiu com inimigo: ");
+        System.Console.WriteLine("Colidiu com inimigo: ");
 
     }
 }
