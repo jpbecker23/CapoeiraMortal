@@ -62,10 +62,6 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     void Update()
     {
-        // Verificações de segurança
-        if (!gameObject.activeInHierarchy) return; // Se desativado, não processar
-        if (GameManager.Instance != null && GameManager.Instance.IsGamePaused) return; // Se jogo pausado, não processar
-        if (playerTarget == null) return; // Se não tem alvo (jogador), não processar
         
         // Calcular distância até o jogador
         float distance = Vector3.Distance(transform.position, playerTarget.position);
