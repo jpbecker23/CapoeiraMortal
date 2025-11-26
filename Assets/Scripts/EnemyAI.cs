@@ -12,7 +12,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private CombatSystem combatSystem;
-    [SerializeField] private HealthSystem healthSystem;
+    [SerializeField] private EnemyHealthBar enemyHealthBar;
     [SerializeField] private Transform playerTarget;
     
     [Header("Configurações")]
@@ -31,29 +31,7 @@ public class EnemyAI : MonoBehaviour
     
     void Start()
     {
-        // Buscar componentes
-        if (animator == null) animator = GetComponent<Animator>();
-        if (agent == null) agent = GetComponent<NavMeshAgent>();
-        if (combatSystem == null) combatSystem = GetComponent<CombatSystem>();
-        if (healthSystem == null) healthSystem = GetComponent<HealthSystem>();
         
-        // Buscar player
-        if (playerTarget == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null) playerTarget = player.transform;
-        }
-        
-        // Configurar NavMesh
-        if (agent != null)
-        {
-            agent.speed = moveSpeed;
-            agent.stoppingDistance = attackRange - 0.5f;
-            SetupNavMesh();
-        }
-        
-        if (animator != null) animator.enabled = true;
-        if (healthSystem != null) healthSystem.OnDeath.AddListener(OnDeath);
     }
     
     /// <summary>
@@ -78,111 +56,7 @@ public class EnemyAI : MonoBehaviour
         {
             Chase(); // Dentro do alcance de detecção -> Perseguir
         }
-        else
-        {
-            Idle(); // Muito longe -> Ficar parado
-        }
-        
         UpdateAnimator(); // Atualizar animações
-    }
-    
-    void OnEnable()
-    {
-        if (animator == null) animator = GetComponent<Animator>();
-        if (agent == null) agent = GetComponent<NavMeshAgent>();
-        if (playerTarget == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null) playerTarget = player.transform;
-        }
-        if (animator != null) animator.enabled = true;
-        if (agent != null) SetupNavMesh();
-    }
-    
-    /// <summary>
-    /// Configura NavMeshAgent - tenta encontrar posição válida no NavMesh
-    /// Busca em círculos concêntricos até encontrar NavMesh válido
-    /// Se não encontrar, desabilita NavMeshAgent (inimigo usará movimento manual)
-    /// </summary>
-    private void SetupNavMesh()
-    {
-        if (agent == null) return;
-        
-        NavMeshHit hit;
-        // Tentar posição atual primeiro
-        if (NavMesh.SamplePosition(transform.position, out hit, 10f, NavMesh.AllAreas))
-        {
-            agent.Warp(hit.position); // Mover agente para posição válida
-            agent.enabled = true;
-        }
-        else
-        {
-            // Se posição atual não está no NavMesh, buscar em múltiplas direções
-            bool found = false;
-            Vector3 searchPos = transform.position;
-            
-            // Buscar em círculos concêntricos (raio 1 até 15 unidades)
-            for (float radius = 1f; radius <= 15f && !found; radius += 1f)
-            {
-                // Buscar em 12 direções (30 graus cada)
-                for (int angle = 0; angle < 360; angle += 30)
-                {
-                    float rad = angle * Mathf.Deg2Rad;
-                    Vector3 testPos = searchPos + new Vector3(Mathf.Cos(rad) * radius, 0, Mathf.Sin(rad) * radius);
-                    
-                    // Verificar se esta posição está no NavMesh
-                    if (NavMesh.SamplePosition(testPos, out hit, 3f, NavMesh.AllAreas))
-                    {
-                        agent.Warp(hit.position); // Mover agente
-                        transform.position = hit.position; // Mover objeto também
-                        agent.enabled = true;
-                        found = true;
-                        Debug.Log($"NavMesh encontrado em posição alternativa: {hit.position}");
-                        break;
-                    }
-                }
-            }
-            
-            // Se não encontrou NavMesh em lugar nenhum, desabilitar agente
-            if (!found)
-            {
-                Debug.LogWarning($"NavMesh não encontrado próximo a {gameObject.name}. Desabilitando NavMeshAgent temporariamente.");
-                agent.enabled = false; // Inimigo usará movimento manual (fallback)
-            }
-        }
-    }
-    
-    private void Idle()
-    {
-        if (agent != null && agent.isOnNavMesh)
-            agent.isStopped = true;
-        
-        // Forcar animacao Idle se existir, senao usar Ginga
-        if (animator != null && animator.enabled)
-        {
-            try
-            {
-                // Tentar Idle primeiro
-                AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                if (!stateInfo.IsName("Idle"))
-                {
-                    animator.Play("Idle", 0, 0f);
-                }
-            }
-            catch
-            {
-                // Se Idle nao existe, usar Ginga (que e o default)
-                try
-                {
-                    AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-                    if (!stateInfo.IsName("Ginga"))
-                    {
-                        animator.Play("Ginga", 0, 0f);
-                    }
-                }
-                catch { }
-            }
-        }
     }
     
     /// <summary>
@@ -201,16 +75,10 @@ public class EnemyAI : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 5f * Time.deltaTime);
         }
         
-        // Movimento com NavMesh se disponível (melhor - evita obstáculos)
         if (agent != null && agent.isOnNavMesh && agent.enabled)
         {
             agent.isStopped = false; // Permitir movimento
             agent.SetDestination(playerTarget.position); // Definir destino
-        }
-        else
-        {
-            // Fallback: movimento manual sem NavMesh (movimento direto, pode atravessar obstáculos)
-            transform.position += direction * moveSpeed * Time.deltaTime;
         }
     }
     
@@ -226,25 +94,6 @@ public class EnemyAI : MonoBehaviour
         string attackType = attackTypes[Random.Range(0, attackTypes.Length)];
         if (currentLevel >= 2 && Random.value < 0.3f)
             attackType = "Esquiva";
-        
-        // Animar
-        if (animator != null)
-        {
-            if (!animator.enabled) animator.enabled = true;
-            animator.Play(attackType, 0, 0f);
-            animator.SetBool("IsAttacking", true);
-        }
-        
-        // Causar dano
-        if (combatSystem != null)
-        {
-            float delay = attackType == "Ginga" ? 0.5f : 0.3f;
-            StartCoroutine(ExecuteAttackAfterDelay(delay));
-        }
-        
-        // Resetar
-        float duration = attackType == "Ginga" ? 1.5f : 1.0f;
-        StartCoroutine(ResetAttackAfterDelay(duration));
     }
     
     private void ExecuteEnemyAttack()

@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Componentes")]
     [SerializeField] private Animator animator;
-   //[SerializeField] private CharacterController controller;
     [SerializeField] private CombatSystem combatSystem;
     [SerializeField] private Camera mainCamera;
 
@@ -22,28 +21,15 @@ public class PlayerController : MonoBehaviour
     private bool isDodging = false;
     private float currentSpeed = 0f;
 
-    /// <summary>
-    /// Inicializa componentes e força Animator a funcionar corretamente
-    /// </summary>
     void Start()
     {
 
     }
 
-    /// <summary>
-    /// Loop principal - processa input, movimento, combate e animações a cada frame
-    /// </summary>
     void Update()
     {
-        HandleInput(); // Processar entrada do jogador
         HandleMovement(); // Mover personagem
         HandleCombat(); // Processar combate
-    }
-
-
-    private void HandleInput()
-    {
-        // Input processado em HandleMovement e HandleCombat
     }
 
     /// <summary>
@@ -61,29 +47,12 @@ public class PlayerController : MonoBehaviour
 
         // Obter input do jogador (WASD ou setas)
         float horizontal = Input.GetAxis("Horizontal"); // A/D ou setas esquerda/direita
-        //float vertical = Input.GetAxis("Vertical"); // W/S ou setas cima/baixo
-
-        // Calcular direção relativa à câmera (para movimento funcionar independente da rotação da câmera)
-        Vector3 forward = mainCamera != null ? mainCamera.transform.forward : Vector3.forward; // Frente da câmera
-        Vector3 right = mainCamera != null ? mainCamera.transform.right : Vector3.right; // Direita da câmera
-        forward.y = 0f; // Ignorar componente Y (altura)
-        right.y = 0f;
-        forward.Normalize(); // Normalizar para ter tamanho 1
-        right.Normalize();
-
-        // Calcular direção final de movimento combinando horizontal e vertical
-        //moveDirection = (right * horizontal + forward * vertical).normalized;
-        moveDirection = (right * horizontal).normalized;
+        moveDirection = new Vector3(0f, 0f, horizontal);
 
         // Se há movimento significativo (maior que 0.1)
-        if (moveDirection.magnitude >= 0.1f)
+        if (Mathf.Abs(horizontal) >= 0.1f)
         {
-            // Rotacionar personagem para olhar na direção do movimento
-            //Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-            // Mover usando CharacterController
-            //controller.Move(moveDirection * moveSpeed * Time.deltaTime);
-            transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+            transform.Translate(moveSpeed * Time.deltaTime * moveDirection);
             currentSpeed = moveSpeed; // Atualizar velocidade atual
         }
         else
@@ -111,42 +80,20 @@ public class PlayerController : MonoBehaviour
         // else if (Input.GetKeyDown(KeyCode.Space)) PerformDodge(); // Esquiva
     }
 
-    private void PerformAttack(string triggerName, float attackDelay, float duration, float damageMultiplier = 1f)
+    private void PerformAttack(string triggerName, float attackDelay, float damageMultiplier = 1f)
     {
         isAttacking = true;
         currentSpeed = 0f; // Parar movimento durante ataque
-
-        try
-        {
-            animator.SetTrigger(triggerName);
-            animator.SetBool("IsAttacking", true);
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"Erro ao executar trigger {triggerName}: {e.Message}");
-        }
 
         if (combatSystem != null)
         {
             StartCoroutine(ExecuteAttackAfterDelay(attackDelay, damageMultiplier));
         }
-
-        StartCoroutine(ResetAttackStateAfterDelay(duration));
     }
 
     private void PerformDodge()
     {
         isDodging = true;
-        currentSpeed = 0f;
-
-        try
-        {
-            animator.SetTrigger("Dodge");
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning($"Erro ao executar Dodge: {e.Message}");
-        }
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlayDodgeSound();
@@ -159,17 +106,6 @@ public class PlayerController : MonoBehaviour
         combatSystem.PerformAttack("Attack", 1f);
         AudioManager.Instance.PlayAttackSound();
     }
-
-    public void ExecuteAttackSpecial()
-    {
-        combatSystem.PerformAttack("Special", 1.5f);
-        AudioManager.Instance.PlayAttackSound();
-    }
-
-    public void OnAttackHit() => ExecuteAttack();
-    public void OnSpecialAttackHit() => ExecuteAttackSpecial();
-    public void OnAttackEnd() => ResetAttackState();
-    public void OnDodgeEnd() => ResetDodgeState();
 
     private void ResetAttackState()
     {
@@ -193,8 +129,6 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         if (multiplier > 1.4f)
-            ExecuteAttackSpecial();
-        else
             ExecuteAttack();
     }
 
