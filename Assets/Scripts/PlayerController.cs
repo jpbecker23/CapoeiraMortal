@@ -28,8 +28,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        HandleMovement(); // Mover personagem
-        HandleCombat(); // Processar combate
+        HandleMovement();
+        HandleCombat();
     }
 
     /// <summary>
@@ -59,49 +59,33 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Processa input de combate - detecta teclas pressionadas e executa ataques
-    /// Teclas: K=Bencao, J=Armada, L=Chapa, U=Rasteira, I=Couro, Space=Esquiva
-    /// </summary>
     public void HandleCombat()
     {
         if (isAttacking || isDodging) return;
-
-        // Verificar cada tecla e executar ataque correspondente
-        // Parâmetros: (nome do trigger, delay do ataque, duração da animação, multiplicador de dano)
-        // if (Input.GetKeyDown(KeyCode.K)) PerformAttack("Bencao", 0.3f, 1.2f);
-        // else if (Input.GetKeyDown(KeyCode.J)) PerformAttack("Armada", 0.4f, 1.5f);
-        // else if (Input.GetKeyDown(KeyCode.L)) PerformAttack("Chapa", 0.3f, 1.0f);
-        // else if (Input.GetKeyDown(KeyCode.U)) PerformAttack("Rasteira", 0.2f, 1.0f);
-        // else if (Input.GetKeyDown(KeyCode.I)) PerformAttack("Couro", 0.5f, 2.0f, 1.5f); // Ataque especial com mais dano
-        // else if (Input.GetKeyDown(KeyCode.Space)) PerformDodge(); // Esquiva
+        // if (Input.GetKeyDown(KeyCode.K)) PerformAttack("Bencao", 0.15f, 10f);
+        // else if (Input.GetKeyDown(KeyCode.J)) PerformAttack("Armada", 1.05f, 10f);
+        // else if (Input.GetKeyDown(KeyCode.L)) PerformAttack("Chapa", 0.14f, 10f);
+        // else if (Input.GetKeyDown(KeyCode.U)) PerformAttack("Rasteira", 0.13f, 10f);
+        // else if (Input.GetKeyDown(KeyCode.I)) PerformAttack("Couro", 1.15f, 10f);
     }
 
-    private void PerformAttack(string triggerName, float attackDelay, float damageMultiplier = 1f)
+    private void PerformAttack(string triggerName, float delay, float damageMultiplier = 1f)
     {
         isAttacking = true;
         currentSpeed = 0f; // Parar movimento durante ataque
-
-        if (combatSystem != null)
-        {
-            StartCoroutine(ExecuteAttackAfterDelay(attackDelay, damageMultiplier));
-        }
+        StartCoroutine(ExecuteAttackAfterDelay(delay, damageMultiplier));
     }
 
     private void PerformDodge()
     {
         isDodging = true;
-
-        if (AudioManager.Instance != null)
-            AudioManager.Instance.PlayDodgeSound();
-
         StartCoroutine(ResetDodgeStateAfterDelay(0.8f));
     }
 
     public void ExecuteAttack()
     {
-        combatSystem.PlayerPerformAttack("Attack", 1f);
-        AudioManager.Instance.PlayAttackSound();
+        HandleCombat();
+        //AudioManager.Instance.PlayAttackSound();
     }
 
     private void ResetAttackState()
@@ -125,8 +109,7 @@ public class PlayerController : MonoBehaviour
     private IEnumerator ExecuteAttackAfterDelay(float delay, float multiplier)
     {
         yield return new WaitForSeconds(delay);
-        if (multiplier > 1.4f)
-            ExecuteAttack();
+        ExecuteAttack();
     }
 
     private IEnumerator ResetAttackStateAfterDelay(float delay)

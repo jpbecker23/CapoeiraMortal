@@ -5068,6 +5068,7 @@ MonoBehaviour:
   playerHealthBar: {fileID: 632754000}
   enemyHealthBar: {fileID: 715524846}
   playerController: {fileID: 523968469}
+  enemyAI: {fileID: 1585444173}
   Protagonista: {fileID: 523968466}
   Vilao: {fileID: 1585444169}
 --- !u!95 &523968473
@@ -8130,7 +8131,8 @@ MonoBehaviour:
   EnemyCurrentHealth: 100
   playerHealthBar: {fileID: 632754000}
   enemyHealthBar: {fileID: 715524846}
-  playerController: {fileID: 0}
+  playerController: {fileID: 523968469}
+  enemyAI: {fileID: 1585444173}
   Protagonista: {fileID: 523968466}
   Vilao: {fileID: 1585444169}
 --- !u!114 &1585444173
@@ -8148,7 +8150,7 @@ MonoBehaviour:
   animator: {fileID: 1585444170}
   agent: {fileID: 1585444177}
   combatSystem: {fileID: 1585444172}
-  enemyHealthBar: {fileID: 0}
+  enemyHealthBar: {fileID: 715524846}
   playerTarget: {fileID: 523968480}
   detectionRange: 3
   attackRange: 2.1
@@ -8212,7 +8214,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.7
-  m_Speed: 3
+  m_Speed: 2
   m_Acceleration: 5
   avoidancePriority: 50
   m_AngularSpeed: 120

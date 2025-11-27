@@ -25,7 +25,7 @@ public class EnemyAI : MonoBehaviour
 
     private bool isAttacking = false;
 
-    private int[] attackTypes = new int[2];
+    private readonly int[] attackTypes = new int[3];
     void Start()
     {
 
@@ -38,11 +38,11 @@ public class EnemyAI : MonoBehaviour
         else if (distance <= attackRange)
         {
             Attack();
-            isAttacking = false;
+            ResetAttack();
         }
         else if (distance <= detectionRange)
         {
-            Chase(); 
+            Chase();
         }
     }
 
@@ -83,21 +83,20 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void ExecuteEnemyAttack()
+    public void AttackDelay(float delay)
     {
-        float multiplier = 1f + (currentLevel - 1) * 0.3f;
-        combatSystem.EnemyPerfomAttack("EnemyAttack", multiplier);
-        AudioManager.Instance.PlayAttackSound();
+        StartCoroutine(ExecuteAttackAfterDelay(5.0f));
     }
-
-    public void OnEnemyAttackHit() => ExecuteEnemyAttack();
-    public void OnEnemyAttackEnd() => ResetAttack();
 
     private void ResetAttack()
     {
+        StartCoroutine(ExecuteAttackAfterDelay(5.0f));
+    }
+
+    private IEnumerator ExecuteAttackAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         isAttacking = false;
-        if (animator != null && animator.enabled)
-            animator.SetBool("IsAttacking", false);
     }
 
     public void SetLevel(int level)
@@ -112,34 +111,9 @@ public class EnemyAI : MonoBehaviour
 
     private void OnDeath()
     {
-        if (agent != null && agent.isOnNavMesh)
-            agent.isStopped = true;
-
-        if (animator != null && animator.enabled)
-        {
-            foreach (AnimatorControllerParameter param in animator.parameters)
-            {
-                if (param.name == "Death" && param.type == AnimatorControllerParameterType.Trigger)
-                {
-                    animator.SetTrigger("Death");
-                    break;
-                }
-            }
-        }
+        animator.SetTrigger("Death");
 
         enabled = false;
-    }
-
-    private IEnumerator ExecuteAttackAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        ExecuteEnemyAttack();
-    }
-
-    private IEnumerator ResetAttackAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        ResetAttack();
     }
 
     void OnDrawGizmosSelected()

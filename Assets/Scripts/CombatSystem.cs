@@ -13,6 +13,7 @@ public class CombatSystem : MonoBehaviour
     public PlayerHealthBar playerHealthBar;
     public EnemyHealthBar enemyHealthBar;
     [SerializeField] private PlayerController playerController;
+    [SerializeField] private EnemyAI enemyAI;
     public GameObject Protagonista;
     public GameObject Vilao;
 
