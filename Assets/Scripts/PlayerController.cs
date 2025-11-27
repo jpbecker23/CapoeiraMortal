@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
 
     public void ExecuteAttack()
     {
-        combatSystem.PerformAttack("Attack", 1f);
+        combatSystem.PlayerPerformAttack("Attack", 1f);
         AudioManager.Instance.PlayAttackSound();
     }
 

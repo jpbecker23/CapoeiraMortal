@@ -28,17 +28,17 @@ public class CombatSystem : MonoBehaviour
     void Update()
     {
         //playerController.HandleCombat();
-        if (Input.GetKeyDown(KeyCode.K)) PerformAttack("Bencao", 10f);
-        else if (Input.GetKeyDown(KeyCode.J)) PerformAttack("Armada", 10f);
-        else if (Input.GetKeyDown(KeyCode.L)) PerformAttack("Chapa", 10f);
-        else if (Input.GetKeyDown(KeyCode.U)) PerformAttack("Rasteira", 10f);
-        else if (Input.GetKeyDown(KeyCode.I)) PerformAttack("Couro", 10f);
+        if (Input.GetKeyDown(KeyCode.K)) PlayerPerformAttack("Bencao", 10f);
+        else if (Input.GetKeyDown(KeyCode.J)) PlayerPerformAttack("Armada", 10f);
+        else if (Input.GetKeyDown(KeyCode.L)) PlayerPerformAttack("Chapa", 10f);
+        else if (Input.GetKeyDown(KeyCode.U)) PlayerPerformAttack("Rasteira", 10f);
+        else if (Input.GetKeyDown(KeyCode.I)) PlayerPerformAttack("Couro", 10f);
     }
 
 
     public void DoAttack()
     {
-        Protagonista.GetComponent<Animator>().SetTrigger("Bencao");
+
     }
 
     public void TakeDamage(float damage)
@@ -58,12 +58,17 @@ public class CombatSystem : MonoBehaviour
         }
     }
 
-    public bool PerformAttack(string attackName, float damageMultiplier = 1f)
+    public bool PlayerPerformAttack(string attackName, float damageMultiplier = 1f)
     {
         Protagonista.GetComponent<Animator>().SetTrigger(attackName);
+        TakeDamage(damageMultiplier);
+        return true;
+    }
+
+    public bool EnemyPerfomAttack(string attackName, float damageMultiplier = 1f)
+    {
         Vilao.GetComponent<Animator>().SetTrigger(attackName);
         TakeDamage(damageMultiplier);
-
         return true;
     }
 
