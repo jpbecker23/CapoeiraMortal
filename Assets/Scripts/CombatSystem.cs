@@ -27,7 +27,6 @@ public class CombatSystem : MonoBehaviour
 
     void Update()
     {
-        //playerController.HandleCombat();
         if (Input.GetKeyDown(KeyCode.K)) PlayerPerformAttack("Bencao", 10f);
         else if (Input.GetKeyDown(KeyCode.J)) PlayerPerformAttack("Armada", 10f);
         else if (Input.GetKeyDown(KeyCode.L)) PlayerPerformAttack("Chapa", 10f);
@@ -35,22 +34,9 @@ public class CombatSystem : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.I)) PlayerPerformAttack("Couro", 10f);
     }
 
-
-    public void DoAttack()
+    public void PlayerTakeDamage(float damage)
     {
-
-    }
-
-    public void TakeDamage(float damage)
-    {
-
-        if (Vector3.Distance(Protagonista.transform.position, Vilao.transform.position) < 2.0f)
-        {
-            Vilao.GetComponent<Animator>().SetTrigger("TakeDamage");
-            EnemyCurrentHealth -= damage;
-            enemyHealthBar.SetEnemyHealth(EnemyCurrentHealth);
-        }
-        else if (Vector3.Distance(Vilao.transform.position, Protagonista.transform.position) < 2.0f)
+        if (Vector3.Distance(Vilao.transform.position, Protagonista.transform.position) < 2.0f)
         {
             Protagonista.GetComponent<Animator>().SetTrigger("TakeDamage");
             PlayerCurrentHealth -= damage;
@@ -58,17 +44,27 @@ public class CombatSystem : MonoBehaviour
         }
     }
 
+    public void EnemyTakeDamage(float damage)
+    {
+        if (Vector3.Distance(Protagonista.transform.position, Vilao.transform.position) < 2.0f)
+        {
+            Vilao.GetComponent<Animator>().SetTrigger("TakeDamage");
+            EnemyCurrentHealth -= damage;
+            enemyHealthBar.SetEnemyHealth(EnemyCurrentHealth);
+        }
+    }
+
     public bool PlayerPerformAttack(string attackName, float damageMultiplier = 1f)
     {
         Protagonista.GetComponent<Animator>().SetTrigger(attackName);
-        TakeDamage(damageMultiplier);
+        EnemyTakeDamage(damageMultiplier);
         return true;
     }
 
     public bool EnemyPerfomAttack(string attackName, float damageMultiplier = 1f)
     {
         Vilao.GetComponent<Animator>().SetTrigger(attackName);
-        TakeDamage(damageMultiplier);
+        PlayerTakeDamage(damageMultiplier);
         return true;
     }
 

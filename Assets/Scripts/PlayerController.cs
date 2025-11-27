@@ -38,14 +38,12 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HandleMovement()
     {
-        // Se está atacando ou fazendo esquiva, não pode se mover
         if (isAttacking || isDodging)
         {
             currentSpeed = 0f;
             return;
         }
 
-        // Obter input do jogador (WASD ou setas)
         float horizontal = Input.GetAxis("Horizontal"); // A/D ou setas esquerda/direita
         moveDirection = new Vector3(0f, 0f, horizontal);
 
@@ -67,7 +65,6 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void HandleCombat()
     {
-        // Se já está atacando ou fazendo esquiva, não processar novo input
         if (isAttacking || isDodging) return;
 
         // Verificar cada tecla e executar ataque correspondente
