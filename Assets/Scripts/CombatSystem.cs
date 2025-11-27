@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ public class CombatSystem : MonoBehaviour
     [SerializeField] private EnemyAI enemyAI;
     public GameObject Protagonista;
     public GameObject Vilao;
+    //private readonly int[] attackTypes = new int[3];
 
     void Start()
     {
@@ -69,4 +71,32 @@ public class CombatSystem : MonoBehaviour
         return true;
     }
 
+    // public void EnemyAttack()
+    // {
+
+    //     int attackType = attackTypes[Random.Range(0, attackTypes.Length)];
+    //     if (attackType == 0)
+    //     {
+    //         EnemyPerfomAttack("Pontera", 10f);
+    //     }
+    //     else if (attackType == 1)
+    //     {
+    //         EnemyPerfomAttack("ChuteAlto", 10f);
+    //     }
+    //     else if (attackType == 2)
+    //     {
+    //         EnemyPerfomAttack("Esquiva", 0f);
+
+    //     }
+    // }
+    // public void TriggerEnemyAttackWithDelay(float delay)
+    // {
+    //     StartCoroutine(EnemyAttackWithDelay(delay));
+    // }
+
+    // private IEnumerator EnemyAttackWithDelay(float delay)
+    // {
+    //     yield return new WaitForSeconds(delay);
+    //     EnemyAttack();
+    // }
 }

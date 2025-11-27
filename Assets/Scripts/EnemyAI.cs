@@ -23,24 +23,18 @@ public class EnemyAI : MonoBehaviour
     [Header("Nível")]
     [SerializeField] private int currentLevel = 1;
 
-    private bool isAttacking = false;
+    //private bool isAttacking = false;
 
     private readonly int[] attackTypes = new int[3];
     void Start()
     {
 
     }
-    void Update()
+    public void Update()
     {
 
         float distance = Vector3.Distance(transform.position, playerTarget.position);
-        if (isAttacking) return;
-        else if (distance <= attackRange)
-        {
-            Attack();
-            ResetAttack();
-        }
-        else if (distance <= detectionRange)
+        if (distance <= detectionRange)
         {
             Chase();
         }
@@ -65,23 +59,23 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void Attack()
-    {
-        isAttacking = true;
-        int attackType = attackTypes[Random.Range(0, attackTypes.Length)];
-        if (attackType == 0)
-        {
-            animator.SetTrigger("Pontera");
-        }
-        else if (attackType == 1)
-        {
-            animator.SetTrigger("ChuteAlto");
-        }
-        else if (attackType == 2)
-        {
-            animator.SetTrigger("Esquiva");
-        }
-    }
+    // public void Attack()
+    // {
+    //     isAttacking = true;
+    //     int attackType = attackTypes[Random.Range(0, attackTypes.Length)];
+    //     if (attackType == 0)
+    //     {
+    //         animator.SetTrigger("Pontera");
+    //     }
+    //     else if (attackType == 1)
+    //     {
+    //         animator.SetTrigger("ChuteAlto");
+    //     }
+    //     else if (attackType == 2)
+    //     {
+    //         animator.SetTrigger("Esquiva");
+    //     }
+    // }
 
     public void AttackDelay(float delay)
     {
@@ -93,10 +87,10 @@ public class EnemyAI : MonoBehaviour
         StartCoroutine(ExecuteAttackAfterDelay(5.0f));
     }
 
-    private IEnumerator ExecuteAttackAfterDelay(float delay)
+    public IEnumerator ExecuteAttackAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        isAttacking = false;
+       // isAttacking = false;
     }
 
     public void SetLevel(int level)
