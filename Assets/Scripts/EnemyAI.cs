@@ -15,6 +15,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private EnemyHealthBar enemyHealthBar;
     [SerializeField] private Transform playerTarget;
 
+    public float EnemyPower = 10f;
+
     [Header("Configurações")]
     [SerializeField] private float detectionRange = 10f;
     [SerializeField] private float attackRange = 2.5f;
@@ -23,9 +25,10 @@ public class EnemyAI : MonoBehaviour
     [Header("Nível")]
     [SerializeField] private int currentLevel = 1;
 
-    //private bool isAttacking = false;
+    private bool isAttacking = false;
 
     private readonly int[] attackTypes = new int[3];
+
     void Start()
     {
 
@@ -37,6 +40,16 @@ public class EnemyAI : MonoBehaviour
         if (distance <= detectionRange)
         {
             Chase();
+            float valorPadrao = Random.Range(0f, 5f);
+            if (!isAttacking)
+            {
+                isAttacking = true;
+                Invoke("Attack", valorPadrao);
+            }
+        }
+        else
+        {
+            isAttacking = false;
         }
     }
 
@@ -59,23 +72,33 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // public void Attack()
-    // {
-    //     isAttacking = true;
-    //     int attackType = attackTypes[Random.Range(0, attackTypes.Length)];
-    //     if (attackType == 0)
-    //     {
-    //         animator.SetTrigger("Pontera");
-    //     }
-    //     else if (attackType == 1)
-    //     {
-    //         animator.SetTrigger("ChuteAlto");
-    //     }
-    //     else if (attackType == 2)
-    //     {
-    //         animator.SetTrigger("Esquiva");
-    //     }
-    // }
+    public void Attack()
+    {
+
+        isAttacking = true;
+
+        int attackType = Random.Range(0, attackTypes.Length + 1);
+        switch (attackType)
+        {
+            case 0:
+                animator.SetTrigger("Pontera");
+                combatSystem.EnemyPerfomAttack("Pontera", EnemyPower);
+                break;
+            case 1:
+                animator.SetTrigger("ChuteAlto");
+                combatSystem.EnemyPerfomAttack("ChuteAlto", EnemyPower);
+                break;
+            case 2:
+                animator.SetTrigger("Esquiva");
+                combatSystem.EnemyPerfomAttack("Esquiva", 0f);
+                break;
+            default:
+                animator.SetTrigger("Pontera");
+                combatSystem.EnemyPerfomAttack("Pontera", EnemyPower);
+                break;
+        }
+        isAttacking = false;
+    }
 
     public void AttackDelay(float delay)
     {
@@ -90,7 +113,7 @@ public class EnemyAI : MonoBehaviour
     public IEnumerator ExecuteAttackAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-       // isAttacking = false;
+        // isAttacking = false;
     }
 
     public void SetLevel(int level)
