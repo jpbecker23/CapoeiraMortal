@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Componentes")]
     [SerializeField] private Animator animator;
-    [SerializeField] private CombatSystem combatSystem;
     [SerializeField] private Camera mainCamera;
 
     [Header("Movimento")]
@@ -20,16 +19,21 @@ public class PlayerController : MonoBehaviour
     private bool isAttacking = false;
     private bool isDodging = false;
     private float currentSpeed = 0f;
+    public AudioSource PlayerAudio;
+    public AudioClip attackSound;
+
+    public GameObject enemyTarget;
+
 
     void Start()
     {
-
+        PlayerAudio = GetComponent<AudioSource>();
     }
 
     void Update()
     {
         HandleMovement();
-        HandleCombat();
+        Chase();
     }
 
     /// <summary>
@@ -59,34 +63,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void HandleCombat()
+    private void Chase()
     {
-        if (isAttacking || isDodging) return;
-        // if (Input.GetKeyDown(KeyCode.K)) PerformAttack("Bencao", 0.15f, 10f);
-        // else if (Input.GetKeyDown(KeyCode.J)) PerformAttack("Armada", 1.05f, 10f);
-        // else if (Input.GetKeyDown(KeyCode.L)) PerformAttack("Chapa", 0.14f, 10f);
-        // else if (Input.GetKeyDown(KeyCode.U)) PerformAttack("Rasteira", 0.13f, 10f);
-        // else if (Input.GetKeyDown(KeyCode.I)) PerformAttack("Couro", 1.15f, 10f);
+        // Calcular direção até o jogador
+        Vector3 direction = (enemyTarget.transform.position - transform.position).normalized;
+        direction.y = 0; // Ignorar altura (movimento apenas no plano XZ)
+
+        // Rotacionar inimigo para olhar na direção do jogador
+        if (direction != Vector3.zero)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 5f * Time.deltaTime);
+        }
     }
 
-    private void PerformAttack(string triggerName, float delay, float damageMultiplier = 1f)
-    {
-        isAttacking = true;
-        currentSpeed = 0f; // Parar movimento durante ataque
-        StartCoroutine(ExecuteAttackAfterDelay(delay, damageMultiplier));
-    }
-
-    private void PerformDodge()
-    {
-        isDodging = true;
-        StartCoroutine(ResetDodgeStateAfterDelay(0.8f));
-    }
-
-    public void ExecuteAttack()
-    {
-        HandleCombat();
-        //AudioManager.Instance.PlayAttackSound();
-    }
 
     private void ResetAttackState()
     {
@@ -101,26 +90,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void ResetDodgeState()
-    {
-        isDodging = false;
-    }
-
     private IEnumerator ExecuteAttackAfterDelay(float delay, float multiplier)
     {
         yield return new WaitForSeconds(delay);
-        ExecuteAttack();
     }
 
     private IEnumerator ResetAttackStateAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
         ResetAttackState();
-    }
-
-    private IEnumerator ResetDodgeStateAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        ResetDodgeState();
     }
 }

@@ -12,25 +12,21 @@ public class FightCameraController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
 
     [Header("Configurações")]
-    [SerializeField] private float distance;
-    [SerializeField] private float height;
-    [SerializeField] private float followSpeed;
     [SerializeField] private float minDistance;
     [SerializeField] private float maxDistance;
 
-    private Vector3 targetPosition;
-    private Vector3 centerPoint;
+    public float startPositionX;
+    public float characterDistance;
+
     public float EscalaDeMovimento = 0.5f;
-    public float OffsetZBase = -10f;
 
     void Start()
     {
+        startPositionX = transform.position.x;
     }
 
     void LateUpdate()
     {
-        if (player == null || enemy == null) return;
-
         UpdateCamera();
     }
 
@@ -42,18 +38,12 @@ public class FightCameraController : MonoBehaviour
     public void UpdateCamera()
     {
         // Calcular distância entre personagens
-        float characterDistance = Vector3.Distance(player.position, enemy.position);
-        float posicaoAlvoZ = (characterDistance * EscalaDeMovimento) + OffsetZBase;
-        transform.localPosition = new Vector3(
-            transform.localPosition.x,
-            transform.localPosition.y,
-            posicaoAlvoZ
-            );
-    }
-
-    public void SetTargets(Transform playerTransform, Transform enemyTransform)
-    {
-        player = playerTransform;
-        enemy = enemyTransform;
+        characterDistance = Vector3.Distance(player.position, enemy.position);
+        if (characterDistance >= maxDistance) return;
+        transform.position = new Vector3(
+            startPositionX + (characterDistance),
+            transform.position.y,
+            transform.position.z
+        );
     }
 }

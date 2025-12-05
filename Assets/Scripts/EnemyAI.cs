@@ -16,6 +16,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private Transform playerTarget;
 
     public float EnemyPower = 10f;
+    public float TimeToAttack = 6f;
 
     [Header("Configurações")]
     [SerializeField] private float detectionRange = 10f;
@@ -40,7 +41,7 @@ public class EnemyAI : MonoBehaviour
         if (distance <= detectionRange)
         {
             Chase();
-            float valorPadrao = Random.Range(0f, 5f);
+            float valorPadrao = Random.Range(0f, TimeToAttack);
             if (!isAttacking)
             {
                 isAttacking = true;

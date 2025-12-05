@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 
 public class CombatSystem : MonoBehaviour
@@ -11,13 +12,16 @@ public class CombatSystem : MonoBehaviour
 
     public float EnemyCurrentHealth;
 
+    public UnityEvent nextLevelEvent;
+
     public PlayerHealthBar playerHealthBar;
     public EnemyHealthBar enemyHealthBar;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private EnemyAI enemyAI;
     public GameObject Protagonista;
     public GameObject Vilao;
-    //private readonly int[] attackTypes = new int[3];
+
+    private bool playerIsAttacking = false;
 
     void Start()
     {
@@ -30,11 +34,20 @@ public class CombatSystem : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K)) PlayerPerformAttack("Bencao", 10f);
-        else if (Input.GetKeyDown(KeyCode.J)) PlayerPerformAttack("Armada", 10f);
-        else if (Input.GetKeyDown(KeyCode.L)) PlayerPerformAttack("Chapa", 10f);
-        else if (Input.GetKeyDown(KeyCode.U)) PlayerPerformAttack("Rasteira", 10f);
-        else if (Input.GetKeyDown(KeyCode.I)) PlayerPerformAttack("Couro", 10f);
+        if (EnemyCurrentHealth <= 0)
+        {
+            Debug.Log("INIMIGO SEM VIDA");
+            nextLevelEvent.Invoke();
+        }
+
+        if (!playerIsAttacking)
+        {
+
+            if (Input.GetKeyDown(KeyCode.K)) PlayerPerformAttack("Bencao", 10f);
+            else if (Input.GetKeyDown(KeyCode.J)) PlayerPerformAttack("Armada", 10f);
+            else if (Input.GetKeyDown(KeyCode.L)) PlayerPerformAttack("Chapa", 10f);
+            else if (Input.GetKeyDown(KeyCode.I)) PlayerPerformAttack("Couro", 10f);
+        }
     }
 
     public void PlayerTakeDamage(float damage)
@@ -54,49 +67,30 @@ public class CombatSystem : MonoBehaviour
             Vilao.GetComponent<Animator>().SetTrigger("TakeDamage");
             EnemyCurrentHealth -= damage;
             enemyHealthBar.SetEnemyHealth(EnemyCurrentHealth);
+            playerController.PlayerAudio.PlayOneShot(playerController.attackSound);
         }
     }
 
-    public bool PlayerPerformAttack(string attackName, float damageMultiplier = 1f)
+    public bool PlayerPerformAttack(string attackName, float damageMultiplier = 1f, float timeToEndAttack = 1.5f)
     {
+        if (playerIsAttacking) return true;
+        playerIsAttacking = true;
         Protagonista.GetComponent<Animator>().SetTrigger(attackName);
-        EnemyTakeDamage(damageMultiplier);
+        //EnemyTakeDamage(damageMultiplier);
+        Invoke("FinalizaAttackPlayer", timeToEndAttack);
         return true;
+    }
+
+    void FinalizaAttackPlayer()
+    {
+        playerIsAttacking = false;
     }
 
     public bool EnemyPerfomAttack(string attackName, float damageMultiplier = 1f)
     {
+        if (playerIsAttacking) return false;
         Vilao.GetComponent<Animator>().SetTrigger(attackName);
-        PlayerTakeDamage(damageMultiplier);
+        //PlayerTakeDamage(damageMultiplier);
         return true;
     }
-
-    // public void EnemyAttack()
-    // {
-
-    //     int attackType = attackTypes[Random.Range(0, attackTypes.Length)];
-    //     if (attackType == 0)
-    //     {
-    //         EnemyPerfomAttack("Pontera", 10f);
-    //     }
-    //     else if (attackType == 1)
-    //     {
-    //         EnemyPerfomAttack("ChuteAlto", 10f);
-    //     }
-    //     else if (attackType == 2)
-    //     {
-    //         EnemyPerfomAttack("Esquiva", 0f);
-
-    //     }
-    // }
-    // public void TriggerEnemyAttackWithDelay(float delay)
-    // {
-    //     StartCoroutine(EnemyAttackWithDelay(delay));
-    // }
-
-    // private IEnumerator EnemyAttackWithDelay(float delay)
-    // {
-    //     yield return new WaitForSeconds(delay);
-    //     EnemyAttack();
-    // }
 }
